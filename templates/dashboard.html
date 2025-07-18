@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-area">
+    <h2 class="mb-2">Company Dashboard</h2>
+    
+    {% if missed_opportunities > 3 %}
+        <div class="alert alert-danger">
+            <strong>Warning:</strong> You have missed applying to {{ missed_opportunities }} eligible companies! This is over the limit of 3.
+        </div>
+    {% else %}
+         <div class="alert alert-success">
+            You have missed applying to {{ missed_opportunities }} eligible companies. Stay on track!
+        </div>
+    {% endif %}
+
+    <div class="table-container">
+        <div class="table-header">
+            <h3>Company List</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Are You Eligible?</th>
+                    <th>Have You Applied?</th>
+                    <th>Update Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                <tr>
+                    <td>{{ company.name }}</td>
+                    <form method="POST" action="{{ url_for('update_status', company_id=company.id) }}">
+                        <td>
+                            <input type="checkbox" name="eligible" {% if user_app_status.get(company.id) and user_app_status[company.id].is_eligible %}checked{% endif %}
+                                   style="width: 20px; height: 20px;">
+                        </td>
+                        <td>
+                            <input type="checkbox" name="applied" {% if user_app_status.get(company.id) and user_app_status[company.id].has_applied %}checked{% endif %}
+                                   style="width: 20px; height: 20px;">
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </td>
+                    </form>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">No companies have been added yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

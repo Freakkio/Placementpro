@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="form-container content-area">
+    <h2 class="mb-2">Create Your Account</h2>
+    <p class="text-secondary mb-2">The first user to register will become the admin.</p>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-input", placeholder="Choose a unique username") }}
+        </div>
+        <div class="form-group">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-input", placeholder="Enter a secure password") }}
+        </div>
+        <div class="form-group">
+            {{ form.confirm_password.label(class="form-label") }}
+            {{ form.confirm_password(class="form-input", placeholder="Confirm your password") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <small class="text-secondary">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: var(--primary-color);">Log In</a>
+        </small>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlacementPro - Job Tracker</title>
+    <style>
+        /* All the CSS from your provided file goes here */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-color: #667eea; --secondary-color: #764ba2; --accent-color: #f093fb;
+            --success-color: #4caf50; --warning-color: #ff9800; --error-color: #f44336;
+            --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155;
+            --text-primary: #f8fafc; --text-secondary: #cbd5e1; --border-color: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary); min-height: 100vh; overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        .header {
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border); position: sticky;
+            top: 0; z-index: 1000; padding: 1rem 0;
+        }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo {
+            font-size: 1.5rem; font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        .user-profile { display: flex; align-items: center; gap: 0.5rem; }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.8rem; text-transform: uppercase;
+        }
+        .main-content { padding: 2rem 0; }
+        .content-area {
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 2rem; border: 1px solid var(--glass-border);
+        }
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 10px; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;
+        }
+        .btn-primary { background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-primary); }
+        .form-input {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 10px;
+            background: var(--bg-secondary); color: var(--text-primary); font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .form-container { max-width: 500px; margin: 2rem auto; }
+        /* Tables */
+        .table-container { background: var(--glass-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--glass-border); }
+        .table-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: var(--bg-tertiary); border-bottom: 1px solid var(--glass-border); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        .table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        .table tr:hover { background: var(--glass-bg); }
+        /* Alerts */
+        .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 10px; color: white; }
+        .alert-success { background: var(--success-color); }
+        .alert-danger { background: var(--error-color); }
+        /* Utility */
+        .mb-2 { margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">PlacementPro</div>
+                <div class="header-actions">
+                    {% if current_user.is_authenticated %}
+                    <div class="user-profile">
+                        <div class="avatar">{{ current_user.username[0] }}</div>
+                        <span>{{ current_user.username }}</span>
+                    </div>
+                    <a href="{{ url_for('add_company') }}" class="btn btn-primary">+ Add Company</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
